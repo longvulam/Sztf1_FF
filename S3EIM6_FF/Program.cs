@@ -10,10 +10,26 @@ namespace S3EIM6_FF
     class Program
     {
         private static readonly MetroLane[] Lanes = new MetroLane[3];
+        private static readonly string[] Transfers = new string[Lanes.Length - 1];
 
         static void Main(string[] args)
         {
             ReadFile();
+
+            int j = 0;
+            for (int i = 0; i < Lanes.Length; i++)
+            {
+                for (int l = i + 1; l < Lanes.Length - 1; l++)
+                {
+                    string transferStation = Lanes[i].GetTransferStation(Lanes[l]);
+                    if (transferStation != null)
+                    {
+                        Transfers[j++] = transferStation;
+                    }
+                }
+            }
+            string[] tomb = new string[10];
+            string[] newT = new string[tomb.Length + 1];
 
             Console.WriteLine("Kérem a kezdőállomást");
             string startingStation = Console.ReadLine().Trim(' ');
@@ -25,18 +41,25 @@ namespace S3EIM6_FF
 
             Console.WriteLine();
 
-            Route route = new Route(startingStation, GetStartingLane(startingStation, destination));
+            MetroLane[] startingLanes = GetStartingLanes(startingStation, destination);
+            Route route = new Route(startingStation, startingLanes[0]);
 
-            GetPath(route, destination);
+            bool success = GetPath(route, destination);
+            j = 1;
+            while (!success)
+            {
+                route = new Route(startingStation, startingLanes[j++]);
+                success = GetPath(route, destination);
+            }
+
             if (args.Length > 0 && args[0] == "-v")
                 Verbose(route);
             else
                 NonVerBose(route);
         }
 
-        private static MetroLane GetStartingLane(string startingStation, string destination)
+        private static MetroLane[] GetStartingLanes(string startingStation, string destination)
         {
-
             MetroLane[] foundLanes = new MetroLane[Lanes.Length];
             int k = 0;
             foreach (MetroLane lane in Lanes)
@@ -46,36 +69,7 @@ namespace S3EIM6_FF
                     foundLanes[k++] = lane;
                 }
             }
-
-            //while (i < Lanes.Length && !Lanes[i].ContainsStation(station))
-            //{
-            //    i++;
-            //}
-            MetroLane startingLane;
-            if (foundLanes.Length > 1)
-            {
-                int i = 0;
-                while (i < k && !foundLanes[i].ContainsStation(destination))
-                {
-                    i++;
-                }
-
-                if (i < k)
-                {
-                    startingLane = foundLanes[i];
-                }
-                else
-                {
-                    startingLane = foundLanes[0];
-                }
-
-            }
-            else
-            {
-                startingLane = foundLanes[0];
-            }
-
-            return startingLane;
+            return foundLanes;
         }
 
         private static void Verbose(Route route)
@@ -120,7 +114,7 @@ namespace S3EIM6_FF
             while (!route.IsEnd)
             {
                 Console.WriteLine(
-                    "{0} - {1} -->> {2} : {3} megállót utazik."
+                    "{0} - {1} átszáll -->> {2} : {3} megállót utazik."
                     , i, route.From, route.MovingTowards, route.Distance);
 
                 route = route.Next;
@@ -128,56 +122,82 @@ namespace S3EIM6_FF
             }
 
             Console.WriteLine(
-                "{0} - {1} -->> {2} : {3} megállót utazik.\n"
+                "{0} - {1}: átszállás -->> {2} : {3} megállót utazik.\n"
                 , i, route.From, route.MovingTowards, route.Distance);
+
             Console.WriteLine("----------- VÉGE ------------");
         }
 
-        private static void GetPath(Route currentRoute, string destination, int i = 0)
+        private static bool GetPath(Route currentRoute, string destination)
         {
             MetroLane currentLane = currentRoute.Lane;
             if (currentLane.ContainsStation(destination))
             {
                 currentRoute.IsEnd = true;
                 currentRoute.To = currentLane.GetFormalName(destination);
-                return;
+                return true;
             }
 
-            string transferStation = null;
-            int j = 0;
-            MetroLane nextLane = null;
-            while (j < Lanes.Length && transferStation == null)
+            Transfer[] transferStations = new Transfer[currentLane.StationsLength];
+            MetroLane previous = currentRoute.Previous;
+
+            int numberOfTransfers = GetTransfers(currentLane, previous, transferStations);
+
+            if (numberOfTransfers > 0)
             {
-                nextLane = Lanes[j];
-                if (!nextLane.Equals(currentLane) && !nextLane.Equals(currentRoute.Previous))
+                currentRoute.To = transferStations[0].Station;
+                if (currentRoute.Distance == 0)
                 {
-                    transferStation = currentLane.GetTransferStation(nextLane);
+                    return false;
                 }
-                j++;
+                Route nextRoute = NextRoute(currentRoute, transferStations[0], currentLane);
+                currentRoute.Next = nextRoute;
+
+                bool success = GetPath(nextRoute, destination);
+                if (!success)
+                {
+                    currentRoute.To = transferStations[1].Station;
+                    if (currentRoute.Distance == 0)
+                    {
+                        return false;
+                    }
+                    nextRoute = NextRoute(currentRoute, transferStations[1], currentLane);
+                    currentRoute.Next = nextRoute;
+                    return GetPath(nextRoute, destination);
+                }
+                return true;
             }
 
-            var nextRoute = new Route(nextLane, transferStation, currentLane);
+            return false;
 
-            currentRoute.Next = nextRoute;
-            currentRoute.To = transferStation;
-
-            GetPath(nextRoute, destination, ++i);
         }
 
-        private static MetroLane GetLane(string station)
+        private static int GetTransfers(MetroLane currentLane, MetroLane previous, Transfer[] transferStations)
         {
-            int i = 0;
-            while (i < Lanes.Length && !Lanes[i].ContainsStation(station))
+            int j = 0;
+            for (int i = 0; i < Lanes.Length; i++)
             {
-                i++;
+                MetroLane lane = Lanes[i];
+                string trStation = currentLane.GetTransferStation(lane);
+                if (trStation != null && !lane.Equals(currentLane) && !lane.Equals(previous))
+                {
+                    transferStations[j++] = new Transfer(trStation, lane);
+                    ;
+                }
             }
+            return j;
+        }
 
-            return Lanes[i];
+        private static Route NextRoute(Route currentRoute, Transfer transferStation, MetroLane currentLane)
+        {
+            var nextRoute = new Route(transferStation.To, transferStation.Station, currentLane);
+            currentRoute.To = transferStation.Station;
+            return nextRoute;
         }
 
         private static void ReadFile()
         {
-            StreamReader reader = new StreamReader("./METRO_2transfer.DAT");
+            StreamReader reader = new StreamReader("./METRO_1transfer.DAT");
             int i = 0;
             while (!reader.EndOfStream)
             {

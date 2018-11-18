@@ -40,7 +40,6 @@
         public bool IsEnd { get; set; } = false;
         public bool IsFirst { get; }
         public int Distance { get; set; }
-
         private string to;
     }
 }

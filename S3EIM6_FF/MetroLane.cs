@@ -108,16 +108,30 @@ namespace S3EIM6_FF
         {
             int[] indexes = new int[2];
             int i = 0;
+            string first = firstStation.ToLowerInvariant();
+            string second = secondStation.ToLowerInvariant();
 
             while (i < stations.Length && (indexes[0] == 0 || indexes[1] == 0))
             {
-                if (stations[i].ToLowerInvariant() == firstStation.ToLowerInvariant())
+                string currentStationToCheck = stations[i].ToLowerInvariant();
+                if (currentStationToCheck == first && currentStationToCheck == second)
                 {
                     indexes[0] = i;
-                }
-                else if (stations[i].ToLowerInvariant() == secondStation.ToLowerInvariant())
-                {
                     indexes[1] = i;
+                }
+                else
+                {
+                    if (currentStationToCheck == first)
+                    {
+                        indexes[0] = i;
+                    }
+                    else
+                    {
+                        if (currentStationToCheck == second)
+                        {
+                            indexes[1] = i;
+                        }
+                    }
                 }
                 i++;
             }
