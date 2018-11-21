@@ -16,6 +16,30 @@
             previousLane = currentLane;
         }
 
+        public Route CreateNext(Transfer transferStation)
+        {
+            var nextRoute = new Route(transferStation.To, transferStation.Station, lane);
+            To = transferStation.Station;
+            return nextRoute;
+        }
+
+        public Transfer[] GetTransfers(MetroLane[] lanes)
+        {
+            Transfer[] transferStations = new Transfer[lanes.Length - 1];
+            int j = 0;
+            for (int i = 0; i < lanes.Length; i++)
+            {
+                MetroLane otherLane = lanes[i];
+                string trStation = lane.GetTransferStation(otherLane);
+                if (trStation != null && !lane.Equals(otherLane) && !otherLane.Equals(previousLane))
+                {
+                    transferStations[j++] = new Transfer(trStation, otherLane);
+                }
+            }
+
+            return transferStations;
+        }
+
         public string From
         {
             get { return from; }

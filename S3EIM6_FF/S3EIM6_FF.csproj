@@ -49,6 +49,7 @@
     <Compile Include="Route.cs" />
     <Compile Include="Station.cs" />
     <Compile Include="Transfer.cs" />
+    <Compile Include="UserHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
