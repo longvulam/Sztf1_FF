@@ -8,7 +8,19 @@ namespace S3EIM6_FF
 {
     class Station
     {
-        public string Name { get; set; }
-        public bool IsTransfer { get; set; }
+        private string name;
+        private bool isTransfer;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public bool IsTransfer
+        {
+            get { return isTransfer; }
+            set { isTransfer = value; }
+        }
     }
 }

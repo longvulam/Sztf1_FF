@@ -20,6 +20,11 @@ namespace S3EIM6_FF
             get { return stations.Length; }
         }
 
+        public void ListStations()
+        {
+            Console.WriteLine(string.Join(", ",stations));
+        }
+
         public bool ContainsStation(string stationName)
         {
             bool contains = false;
@@ -140,10 +145,11 @@ namespace S3EIM6_FF
 
         public override bool Equals(object obj)
         {
-            if (obj as MetroLane == null)
+            if (obj == null)
             {
                 return false;
             }
+
             return ((MetroLane)obj).A_EndStation == A_EndStation && ((MetroLane)obj).B_EndStation == B_EndStation;
         }
     }
