@@ -5,10 +5,10 @@ namespace S3EIM6_FF
 {
     class UserHandler
     {
-        public MetroLane[] ReadFile()
+        public MetroLane[] GetLanesFromFile(string fileName)
         {
-            MetroLane[] Lanes = new MetroLane[3];
-            StreamReader reader = new StreamReader("./METRO_2transfer.DAT");
+            MetroLane[] lanes = new MetroLane[3];
+            StreamReader reader = new StreamReader("./" + fileName);
             int i = 0;
             while (!reader.EndOfStream)
             {
@@ -21,16 +21,19 @@ namespace S3EIM6_FF
                     lane[j - 1] = split[j];
                 }
 
-                Lanes[i++] = new MetroLane(lane);
+                lanes[i++] = new MetroLane(lane);
             }
             reader.Close();
             reader.Dispose();
 
-            return Lanes;
+            return lanes;
         }
 
-        public void HandleUserInputs(MetroLane[] lanes, ref string startingStation, ref string destination)
+        public string[] HandleUserInputs(MetroLane[] lanes)
         {
+            string [] stations = new string[2];
+            string startingStation;
+            string destination;
             bool isValid = false;
             do
             {
@@ -63,6 +66,11 @@ namespace S3EIM6_FF
                     Console.ReadLine();
                 }
             } while (!isValid);
+
+            stations[0] = startingStation;
+            stations[1] = destination;
+
+            return stations;
         }
 
         public void Verbose(Route route)

@@ -53,10 +53,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="METRO_2TRANSFER.DAT">
+    <None Include="metro_2transfer_sample.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="METRO_1TRANSFER.DAT">
+    <None Include="metro_1transfer_sample.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="METRO.DAT">

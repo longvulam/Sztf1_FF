@@ -16,12 +16,11 @@ namespace S3EIM6_FF
             //////////////////////////////////
 
             UserHandler userHandler = new UserHandler();
-            MetroLane[] lanes = userHandler.ReadFile();
+            MetroLane[] lanes = userHandler.GetLanesFromFile("METRO.DAT");
+            string[] stations = userHandler.HandleUserInputs(lanes);
 
-            string startingStation = "";
-            string destination = "";
-
-            userHandler.HandleUserInputs(lanes, ref startingStation, ref destination);
+            string startingStation = stations[0];
+            string destination = stations[1];
 
             UserHandler.Seperator();
 
