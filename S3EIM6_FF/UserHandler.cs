@@ -5,29 +5,6 @@ namespace S3EIM6_FF
 {
     class UserHandler
     {
-        public MetroLane[] GetLanesFromFile(string fileName)
-        {
-            MetroLane[] lanes = new MetroLane[3];
-            StreamReader reader = new StreamReader("./" + fileName);
-            int i = 0;
-            while (!reader.EndOfStream)
-            {
-                string line = reader.ReadLine();
-                string[] split = line.Split(';');
-                int numberOfStations = int.Parse(split[0]);
-                string[] lane = new string[numberOfStations];
-                for (int j = 1; j < split.Length; j++)
-                {
-                    lane[j - 1] = split[j];
-                }
-
-                lanes[i++] = new MetroLane(lane);
-            }
-            reader.Close();
-            reader.Dispose();
-
-            return lanes;
-        }
 
         public string[] HandleUserInputs(MetroLane[] lanes)
         {
@@ -99,23 +76,6 @@ namespace S3EIM6_FF
                 , route.From, route.MovingTowards, route.Distance);
         }
 
-        private bool ValidateInput(string stationName, MetroLane[] lanes)
-        {
-            int i = 0;
-            while (i < lanes.Length && !lanes[i].ContainsStation(stationName))
-            {
-                i++;
-            }
-
-            bool isValid = false;
-            if (i < lanes.Length)
-            {
-                isValid = true;
-            }
-
-            return isValid;
-        }
-
         public void NonVerBose(Route route)
         {
             int i = 1;
@@ -149,6 +109,23 @@ namespace S3EIM6_FF
         public static void Seperator()
         {
             Console.WriteLine("------------------------");
+        }
+
+        private bool ValidateInput(string stationName, MetroLane[] lanes)
+        {
+            int i = 0;
+            while (i < lanes.Length && !lanes[i].ContainsStation(stationName))
+            {
+                i++;
+            }
+
+            bool isValid = false;
+            if (i < lanes.Length)
+            {
+                isValid = true;
+            }
+
+            return isValid;
         }
     }
 }

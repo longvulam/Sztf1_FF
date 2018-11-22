@@ -15,8 +15,8 @@ namespace S3EIM6_FF
             // Preperations and user inputs //
             //////////////////////////////////
 
+            MetroLane[] lanes = GetLanesFromFile("METRO.DAT");
             UserHandler userHandler = new UserHandler();
-            MetroLane[] lanes = userHandler.GetLanesFromFile("METRO.DAT");
             string[] stations = userHandler.HandleUserInputs(lanes);
 
             string startingStation = stations[0];
@@ -49,6 +49,30 @@ namespace S3EIM6_FF
                 userHandler.Verbose(route);
             else
                 userHandler.NonVerBose(route);
+        }
+
+        private static MetroLane[] GetLanesFromFile(string fileName)
+        {
+            MetroLane[] lanes = new MetroLane[3];
+            StreamReader reader = new StreamReader("./" + fileName);
+            int i = 0;
+            while (!reader.EndOfStream)
+            {
+                string line = reader.ReadLine();
+                string[] split = line.Split(';');
+                int numberOfStations = int.Parse(split[0]);
+                string[] lane = new string[numberOfStations];
+                for (int j = 1; j < split.Length; j++)
+                {
+                    lane[j - 1] = split[j];
+                }
+
+                lanes[i++] = new MetroLane(lane);
+            }
+            reader.Close();
+            reader.Dispose();
+
+            return lanes;
         }
 
         private static MetroLane[] GetStartingLanes(string startingStation, MetroLane[] lanes)
