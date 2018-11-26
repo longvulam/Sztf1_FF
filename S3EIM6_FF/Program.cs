@@ -16,8 +16,7 @@ namespace S3EIM6_FF
             //////////////////////////////////
 
             MetroLane[] lanes = GetLanesFromFile("METRO.DAT");
-            UserHandler userHandler = new UserHandler();
-            string[] stations = userHandler.HandleUserInputs(lanes);
+            string[] stations = UserHandler.HandleUserInputs(lanes);
 
             string startingStation = stations[0];
             string destination = stations[1];
@@ -46,9 +45,9 @@ namespace S3EIM6_FF
             //////////////
 
             if (args.Length > 0 && args[0] == "-v")
-                userHandler.Verbose(route);
+                UserHandler.Verbose(route);
             else
-                userHandler.NonVerBose(route);
+                UserHandler.NonVerBose(route);
         }
 
         private static MetroLane[] GetLanesFromFile(string fileName)

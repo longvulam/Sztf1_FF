@@ -18,9 +18,9 @@
 
         public Route CreateNext(Transfer transferStation)
         {
-            var nextRoute = new Route(transferStation.To, transferStation.Station, lane);
+            Route next = new Route(transferStation.To, transferStation.Station, lane);
             To = transferStation.Station;
-            return nextRoute;
+            return next;
         }
 
         public Transfer[] GetTransfers(MetroLane[] lanes)

@@ -6,7 +6,7 @@ namespace S3EIM6_FF
     class UserHandler
     {
 
-        public string[] HandleUserInputs(MetroLane[] lanes)
+        public static string[] HandleUserInputs(MetroLane[] lanes)
         {
             string [] stations = new string[2];
             string startingStation;
@@ -50,7 +50,7 @@ namespace S3EIM6_FF
             return stations;
         }
 
-        public void Verbose(Route route)
+        public static void Verbose(Route route)
         {
             Console.WriteLine(
                 "A túristának '{0}' állomástól, '{1}' felé, {2} megállót utazik.\n"
@@ -76,7 +76,7 @@ namespace S3EIM6_FF
                 , route.From, route.MovingTowards, route.Distance);
         }
 
-        public void NonVerBose(Route route)
+        public static void NonVerBose(Route route)
         {
             int i = 1;
             Console.WriteLine("{0} - {1} -->> {2} : {3} megállót utazik."
@@ -111,7 +111,7 @@ namespace S3EIM6_FF
             Console.WriteLine("------------------------");
         }
 
-        private bool ValidateInput(string stationName, MetroLane[] lanes)
+        private static bool ValidateInput(string stationName, MetroLane[] lanes)
         {
             int i = 0;
             while (i < lanes.Length && !lanes[i].ContainsStation(stationName))
